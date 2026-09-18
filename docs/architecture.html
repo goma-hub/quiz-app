@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>quiz-app | コード構成と処理の流れ</title>
+    <style>
+      :root { --ink:#152b42; --muted:#627286; --line:#dbe5ee; --page:#f5f8fb; --card:#fff; --html:#e44d26; --css:#2862e9; --js:#d5a300; --accent:#0e7c86; --mint:#e5f6f2; }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body { margin:0; color:var(--ink); background:var(--page); font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; line-height:1.65; }
+      .hero { padding:72px 24px 64px; color:#fff; background:radial-gradient(circle at 84% 16%,#318ba4 0 2%,transparent 25%),linear-gradient(135deg,#142f4d,#1d5575); }
+      .wrap { width:min(1120px,100%); margin:auto; }
+      .eyebrow { margin:0 0 10px; color:#9fe7e0; letter-spacing:.12em; font-size:.78rem; font-weight:800; }
+      h1 { margin:0; font-size:clamp(2rem,5vw,3.5rem); line-height:1.18; }
+      .lead { max-width:720px; margin:18px 0 0; color:#dcebf4; font-size:1.08rem; }
+      .stats { display:flex; flex-wrap:wrap; gap:12px; margin-top:28px; }
+      .stat { min-width:132px; padding:12px 16px; border:1px solid rgb(255 255 255 / .22); border-radius:10px; background:rgb(255 255 255 / .1); font-weight:700; }
+      main { padding:48px 24px 72px; }
+      section { margin-top:56px; }
+      h2 { display:flex; align-items:center; gap:12px; margin:0 0 22px; font-size:1.55rem; }
+      h2::before { width:8px; height:28px; border-radius:5px; background:var(--accent); content:""; }
+      .section-note { margin:-12px 0 24px; color:var(--muted); }
+      .file-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+      .file-card { position:relative; min-height:244px; padding:24px; overflow:hidden; border:1px solid var(--line); border-radius:16px; background:var(--card); box-shadow:0 8px 24px rgb(26 56 84 / .06); }
+      .file-card::after { position:absolute; right:-16px; bottom:-28px; color:rgb(0 0 0 / .04); font-size:7rem; font-weight:900; content:attr(data-kind); }
+      .file-label { display:inline-block; margin-bottom:12px; padding:3px 9px; border-radius:999px; color:#fff; font-size:.74rem; font-weight:800; }
+      .html { background:var(--html); }.css { background:var(--css); }.js { background:var(--js); color:#312600; }
+      h3 { margin:0 0 9px; font-size:1.22rem; }
+      .file-card p { margin:0; color:var(--muted); }
+      .file-card ul { margin:15px 0 0; padding-left:1.1rem; font-size:.92rem; }
+      .map { display:grid; grid-template-columns:1.1fr 48px 1.6fr; align-items:center; gap:12px; }
+      .source, .app-area { padding:22px; border:1px solid var(--line); border-radius:16px; background:var(--card); }
+      .source strong, .app-area strong { display:block; margin-bottom:12px; }
+      .source-item { margin-top:8px; padding:9px 12px; border-radius:8px; background:#f4f7fa; font-size:.92rem; }
+      .arrow { color:var(--accent); font-size:2rem; text-align:center; }
+      .screens { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+      .screen { min-height:142px; padding:14px; border:2px solid var(--line); border-radius:11px; background:#fbfdff; }
+      .screen.active { border-color:var(--accent); background:var(--mint); }
+      .screen-title { display:block; margin-bottom:8px; font-size:.86rem; font-weight:800; }
+      .mini-line { width:85%; height:8px; margin:7px 0; border-radius:99px; background:#d9e4eb; }
+      .mini-btn { width:68%; height:19px; margin-top:10px; border-radius:5px; background:#2878b5; }
+      .flow { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; align-items:stretch; }
+      .step { position:relative; padding:20px 15px; border:1px solid var(--line); border-radius:14px; background:var(--card); text-align:center; }
+      .step-num { display:grid; place-items:center; width:30px; height:30px; margin:0 auto 10px; border-radius:50%; color:#fff; background:var(--accent); font-weight:800; }
+      .step h3 { font-size:1rem; }.step p { margin:6px 0 0; color:var(--muted); font-size:.84rem; }
+      .step:not(:last-child)::after { position:absolute; z-index:1; top:50%; right:-17px; color:var(--accent); font-size:1.3rem; content:"→"; transform:translateY(-50%); }
+      .logic { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+      .logic-card { padding:24px; border-radius:16px; background:var(--card); border:1px solid var(--line); }
+      .logic-card h3 { color:var(--accent); }
+      .logic-card ol { margin:12px 0 0; padding-left:1.25rem; }
+      code { padding:2px 5px; border-radius:4px; background:#edf2f6; color:#254867; font-family:ui-monospace,Consolas,monospace; font-size:.88em; }
+      .legend { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; color:var(--muted); font-size:.9rem; }.dot { display:inline-block; width:10px; height:10px; margin-right:4px; border-radius:50%; }.correct { background:#237a57; }.incorrect { background:#c43c46; }.normal { background:#2878b5; }
+      footer { padding:22px; border-top:1px solid var(--line); color:var(--muted); text-align:center; font-size:.85rem; }
+      @media (max-width:800px) { .file-grid,.logic { grid-template-columns:1fr; }.flow { grid-template-columns:1fr; }.step:not(:last-child)::after { top:auto; right:auto; bottom:-23px; left:50%; transform:translateX(-50%) rotate(90deg); }.map { grid-template-columns:1fr; }.arrow { transform:rotate(90deg); }.screens { grid-template-columns:1fr; }.screen { min-height:92px; } }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="wrap">
+        <p class="eyebrow">CODE GUIDE / QUIZ-APP</p>
+        <h1>一般常識クイズアプリの<br>構成と処理の流れ</h1>
+        <p class="lead">HTML・CSS・JavaScriptだけで作られた、3問または6問を選んで遊べる4択クイズアプリです。このページは現在の実装をもとに、各ファイルの役割と利用者の操作に応じた処理を図解します。</p>
+        <div class="stats"><span class="stat">3 ファイル構成</span><span class="stat">6 問の問題データ</span><span class="stat">3 つの画面</span></div>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section>
+        <h2>プロジェクトのファイル構成</h2>
+        <p class="section-note">クイズ本体は、表示の骨組み・見た目・動きの3つに分割されています。</p>
+        <div class="file-grid">
+          <article class="file-card" data-kind="HTML"><span class="file-label html">HTML</span><h3>index.html</h3><p>アプリ画面の骨組みを定義します。</p><ul><li>開始・クイズ・結果の3画面</li><li>問題、選択肢、フィードバックの表示場所</li><li><code>style.css</code> と <code>script.js</code> の読み込み</li></ul></article>
+          <article class="file-card" data-kind="CSS"><span class="file-label css">CSS</span><h3>style.css</h3><p>見やすさと状態の違いを表現します。</p><ul><li>カード型レイアウトとレスポンシブ表示</li><li>正解は緑、不正解は赤で強調</li><li>ボタンのホバー・キーボード操作時の見た目</li></ul></article>
+          <article class="file-card" data-kind="JS"><span class="file-label js">JAVASCRIPT</span><h3>script.js</h3><p>問題データ、採点、画面の切り替えを担当します。</p><ul><li><code>questions</code> に6問の4択データ</li><li>出題数に応じて問題を取り出す</li><li>回答判定とスコア集計</li></ul></article>
+        </div>
+      </section>
+
+      <section>
+        <h2>画面を作る要素の対応</h2>
+        <div class="map">
+          <div class="source"><strong>index.html の主な要素</strong><div class="source-item"><code>#start-screen</code> 開始画面</div><div class="source-item"><code>#quiz-screen</code> 出題画面</div><div class="source-item"><code>#result-screen</code> 結果画面</div><div class="source-item"><code>#progress</code> 進捗表示</div></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="app-area"><strong>利用者に見える画面</strong><div class="screens"><div class="screen active"><span class="screen-title">開始画面</span><div class="mini-line"></div><div class="mini-btn"></div><div class="mini-btn"></div></div><div class="screen"><span class="screen-title">クイズ画面</span><div class="mini-line"></div><div class="mini-line"></div><div class="mini-btn"></div></div><div class="screen"><span class="screen-title">結果画面</span><div class="mini-line"></div><div class="mini-line"></div><div class="mini-btn"></div></div></div></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>利用者の操作と画面遷移</h2>
+        <p class="section-note">最初に3問または6問を選び、回答と採点を繰り返して結果へ進みます。</p>
+        <div class="flow"><article class="step"><div class="step-num">1</div><h3>開始画面</h3><p>「3問」または「6問」を選択</p></article><article class="step"><div class="step-num">2</div><h3>出題を準備</h3><p><code>startQuiz()</code> が選んだ数だけ問題を用意</p></article><article class="step"><div class="step-num">3</div><h3>問題に回答</h3><p>4つの選択肢のいずれかを選ぶ</p></article><article class="step"><div class="step-num">4</div><h3>正誤を表示</h3><p>解説と「次の問題へ」を表示</p></article><article class="step"><div class="step-num">5</div><h3>結果画面</h3><p>合計正解数を表示し、再挑戦できる</p></article></div>
+      </section>
+
+      <section>
+        <h2>JavaScript の処理詳細</h2>
+        <div class="logic">
+          <article class="logic-card"><h3>開始から出題まで</h3><ol><li>開始ボタンの <code>data-question-count</code> から、3または6を受け取る。</li><li><code>startQuiz(questionCount)</code> が <code>currentQuestion</code> と <code>score</code> を0に戻す。</li><li><code>questions.slice(0, questionCount)</code> で、出題する問題を <code>activeQuestions</code> に設定する。</li><li><code>showQuestion()</code> が問題文と4つの選択肢ボタンを画面に描画する。</li></ol></article>
+          <article class="logic-card"><h3>回答から結果まで</h3><ol><li>選択肢を押すと <code>selectAnswer()</code> が正解番号と比較する。</li><li>全選択肢を操作不可にし、正解には緑、不正解の選択には赤のクラスを付ける。</li><li>正解なら <code>score</code> に1を加え、解説を表示する。</li><li>最後の問題なら「結果を見る」、それ以外なら「次の問題へ」を表示する。</li><li><code>showResult()</code> が「○問中○問正解」とメッセージを表示する。</li></ol></article>
+        </div>
+        <p class="legend"><span><i class="dot normal"></i>通常の操作ボタン</span><span><i class="dot correct"></i>正解として表示される選択肢</span><span><i class="dot incorrect"></i>不正解として選んだ選択肢</span></p>
+      </section>
+    </main>
+    <footer>quiz-app / architecture guide — 現在の index.html・style.css・script.js をもとに作成</footer>
+  </body>
+</html>

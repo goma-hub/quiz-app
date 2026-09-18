@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="一般常識を楽しく学べる4択クイズアプリ" />
+    <title>一般常識クイズ</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="quiz-container">
+      <header class="quiz-header">
+        <p class="eyebrow">GENERAL KNOWLEDGE QUIZ</p>
+        <h1>一般常識クイズ</h1>
+        <p id="progress" class="progress" aria-live="polite"></p>
+      </header>
+
+      <section id="start-screen" class="quiz-card start-screen" aria-labelledby="start-title">
+        <p class="start-mark" aria-hidden="true">💡</p>
+        <h2 id="start-title">何問チャレンジしますか？</h2>
+        <p>一般常識クイズに挑戦しましょう。</p>
+        <div class="start-buttons">
+          <button class="primary-button start-button" type="button" data-question-count="3">3問でスタート</button>
+          <button class="primary-button start-button" type="button" data-question-count="6">6問でスタート</button>
+        </div>
+      </section>
+
+      <section id="quiz-screen" class="quiz-card" aria-labelledby="question" hidden>
+        <h2 id="question"></h2>
+        <div id="choices" class="choices" role="group" aria-label="回答の選択肢"></div>
+        <div id="feedback" class="feedback" aria-live="polite" hidden></div>
+        <button id="next-button" class="primary-button" type="button" hidden>次の問題へ</button>
+      </section>
+
+      <section id="result-screen" class="quiz-card result" aria-labelledby="result-title" hidden>
+        <p class="result-mark" aria-hidden="true">🏆</p>
+        <h2 id="result-title">クイズ終了！</h2>
+        <p id="score" class="score" aria-live="polite"></p>
+        <p id="score-message"></p>
+        <div class="restart-buttons">
+          <button class="primary-button restart-button" type="button" data-question-count="3">3問でもう一度挑戦する</button>
+          <button class="primary-button restart-button" type="button" data-question-count="6">6問でもう一度挑戦する</button>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
