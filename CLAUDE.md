@@ -25,4 +25,4 @@
 - 変更後はブラウザで主要な導線（開始、回答、次の問題、結果確認）を確認する。
 
 ## GitHubリポジトリ
-https://github.com/minagoma37-cmd/quiz-app
+https://github.com/goma-hub/quiz-app
